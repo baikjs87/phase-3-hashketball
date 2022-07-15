@@ -1,3 +1,4 @@
+require "pry"
 # Write your code below game_hash
 def game_hash
   {
@@ -126,4 +127,107 @@ def game_hash
   }
 end
 
-# Write code here
+# Helper methods ------
+def find_player name
+  game_hash.each do |team|
+    team[1][:players].find do |player|
+      if player[:player_name] == name
+        return player
+      end
+    end
+  end
+end
+
+def find_team name
+  team = game_hash.find { |team| 
+    team[1][:team_name] == name }
+  team[1]
+end
+
+def all_players
+  game_hash[:home][:players] + game_hash[:away][:players]
+end
+
+# Assignments -----
+
+def num_points_scored(name)
+  find_player(name)[:points]
+end
+
+def shoe_size name
+  find_player(name)[:shoe]
+end
+
+def team_colors name
+  find_team(name)[:colors]
+  # game_hash.each do |team|
+  #   if team[1][:team_name] == name
+  #     return team[1][:colors]
+  #   end
+  # end
+end
+
+def team_names
+  team_names_array = []
+  game_hash.each do |team|
+    team_names_array.push(team[1][:team_name])
+  end
+  team_names_array
+end
+
+def player_numbers name
+  find_team(name)[:players].map { |player| player[:number] }
+#   all_numbers = []
+#   game_hash.each do |team|
+#     if team[1][:team_name] == name
+#       team[1][:players].each do |player|
+#       all_numbers.push(player[:number])
+#     end
+#   end
+#  end
+#  all_numbers
+end
+
+def player_stats name
+  find_player(name)
+end
+
+def big_shoe_rebounds
+  biggest_shoe_player = {shoe: 0}
+  game_hash.each do |team|
+    team[1][:players].each do |player|
+      if player[:shoe] > biggest_shoe_player[:shoe]
+        biggest_shoe_player = player
+      end
+    end
+  end
+  biggest_shoe_player[:rebounds]
+end
+
+def most_points_scored
+  most_scored = {points: 0}
+  game_hash.each do |team|
+    team[1][:players].each do |player|
+      if player[:points] > most_scored[:points]
+        most_scored = player
+      end
+    end
+  end
+  most_scored[:player_name]
+end
+
+def winning_team
+  home_points = game_hash[:home][:players].sum { |player| player[:points] }
+  away_points = game_hash[:away][:players].map { |player| player[:points] }.sum
+  if home_points > away_points
+    game_hash[:home][:team_name]
+  else
+    game_hash[:away][:team_name]
+  end
+end
+
+def player_with_longest_name
+  all_players.max{ |a,b| a[:player_name].length <=> b[:player_name].length }
+end
+
+puts winning_team
